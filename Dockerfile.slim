@@ -1,0 +1,69 @@
+FROM archlinux
+
+ARG BUILD_USER
+ARG BUILD_GROUP
+ARG GIT_EMAIL
+ARG GIT_NAME
+
+ENV \
+  BUILD_USER=$BUILD_USER \
+  BUILD_GROUP=$BUILD_GROUP
+
+RUN \
+  pacman --noconfirm -Syu \
+  && pacman --needed --noconfirm -S \
+    base-devel \
+    bat \
+    ctags \
+    exa \
+    fd \
+    fzf \
+    git \
+    git-lfs \
+    global \
+    mdcat \
+    neovim \
+    procs \
+    ripgrep \
+    sudo \
+    tmux \
+    vivid \
+    zsh \
+  && rm -rf /var/cache/pacman/pkg/*
+
+RUN \
+  useradd -ms /bin/zsh $BUILD_USER \
+  && echo "$BUILD_USER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+USER $BUILD_USER
+WORKDIR /home/$BUILD_USER
+RUN \
+  export TERM=dumb; \
+  echo 'exec zsh -l' >> .bashrc \
+  && git clone --depth 1 https://github.com/anyakichi/dotfiles.git \
+  && (cd dotfiles && mv $(ls -A) ..) \
+  && rmdir dotfiles \
+  && git config --global user.email "$GIT_EMAIL" \
+  && git config --global user.name "$GIT_NAME" \
+  && nvim -u ~/.config/nvim/init.d/plug.vim +PlugBootstrap +qall \
+  && nvim -u ~/.config/nvim/init.d/plug.vim +PlugUpdate +qall \
+  && git clone --depth 1 \
+    https://github.com/tmux-plugins/tpm ~/.local/share/tmux/plugins/tpm \
+  && ~/.local/share/tmux/plugins/tpm/bin/install_plugins \
+  && source ~/.profile \
+  && mkdir -p "$(bat --config-dir)/themes" && cd "$(bat --config-dir)/themes" \
+  && git clone --depth 1 \
+    https://github.com/voronianski/oceanic-next-color-scheme.git \
+  && bat cache --build \
+  && TERM=screen-256color zsh -i \
+  && ~/.local/share/zsh/zinit/plugins/romkatv---powerlevel10k/gitstatus/install
+
+USER root
+
+COPY buildenv/entrypoint.sh /usr/local/sbin/entrypoint
+COPY buildenv/buildenv.sh /usr/local/bin/buildenv
+
+ENTRYPOINT ["/usr/local/sbin/entrypoint"]
+CMD ["/bin/bash"]
+
+ENV P9K_SSH=1
