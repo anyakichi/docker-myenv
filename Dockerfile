@@ -24,7 +24,7 @@ RUN \
   && yay --noconfirm -S \
     reason-language-server \
   && yay --noconfirm -Sc \
-  && sudo pacman --noconfirm -Rcsn go \
+  && sudo pacman --noconfirm -Rcsn $(pacman -Qdtq) \
   && sudo rm -rf /var/cache/pacman/pkg/* ~/.cache/go-build ~/yay
 
 USER root
