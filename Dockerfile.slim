@@ -60,10 +60,10 @@ RUN \
 
 USER root
 
-COPY buildenv/entrypoint.sh /usr/local/sbin/entrypoint
+COPY buildenv/entrypoint.sh /buildenv-entrypoint.sh
 COPY buildenv/buildenv.sh /usr/local/bin/buildenv
 
-ENTRYPOINT ["/usr/local/sbin/entrypoint"]
+ENTRYPOINT ["/buildenv-entrypoint.sh"]
 CMD ["/bin/bash"]
 
 ENV P9K_SSH=1
