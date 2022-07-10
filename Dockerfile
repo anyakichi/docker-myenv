@@ -18,7 +18,6 @@ RUN \
 
 USER $BUILD_USER
 RUN \
-  export TERM=dumb; \
-  nvim +"TSInstallSync all" +qall
+  nvim -c "set nomore" +"TSInstallSync all" +qall
 
 USER root
