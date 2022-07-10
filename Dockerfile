@@ -18,6 +18,7 @@ RUN \
 
 USER $BUILD_USER
 RUN \
+  export TERM=dumb; \
   nvim +"TSInstallSync all" +qall
 
 USER root
