@@ -8,6 +8,7 @@ RUN \
     docker \
     gopls \
     lua-language-server \
+    npm \
     prettier \
     pyright \
     rust-analyzer \
