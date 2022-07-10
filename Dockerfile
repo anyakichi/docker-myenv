@@ -17,14 +17,6 @@ RUN \
 
 USER $BUILD_USER
 RUN \
-  pwd \
-  && git clone https://aur.archlinux.org/yay.git \
-  && cd yay \
-  && makepkg --noconfirm -si \
-  && yay --noconfirm -S \
-    reason-language-server \
-  && yay --noconfirm -Sc \
-  && sudo pacman --noconfirm -Rcsn $(pacman -Qdtq) \
-  && sudo rm -rf /var/cache/pacman/pkg/* ~/.cache/go-build ~/yay
+  nvim +"TSInstallSync all" +qall
 
 USER root
